@@ -20,7 +20,7 @@ def process_works(raw_works: list[dict]) -> pd.DataFrame:
   df["journal"] = df["journal"].fillna("Джерело не вказано")
   
   
-  df["publication_year"] = pd.to_numeric(df["publication_year"], errors="coerce").fillna(0).astype(int)
+  df["publication_year"] = pd.to_numeric(df["year"], errors="coerce").fillna(0).astype(int)
   df["cited_by_count"] = pd.to_numeric(df["cited_by_count"], errors="coerce").fillna(0).astype(int)
 
   
