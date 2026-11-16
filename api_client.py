@@ -92,11 +92,14 @@ def load_from_cache(query):
 
 # ---------- основна функція ----------
 
-def _fetch_openalex(query, limit):
+def _fetch_openalex(query, limit, language=None):
     limit = max(1, min(int(limit), MAX_RESULTS))
+    params = {"search": query, "per-page": limit}
+    if language:
+        params["filter"] = f"language:{language}"
     response = requests.get(
         OPENALEX_URL,
-        params={"search": query, "per-page": limit},
+        params=params,
         headers=HEADERS,
         timeout=10,
     )
@@ -117,27 +120,30 @@ def _fetch_google_scholar(query, limit=GS_LIMIT):
     return records
 
 
-def fetch_scientific_works(query, limit=10, use_google_scholar=False):
-    """Повертає list of dicts за контрактом (максимум 10 статей). Ніколи не кидає виняток.
+def fetch_scientific_works(query, limit=10, use_google_scholar=False, language=None):
+    """Повертає list of dicts (максимум 10 статей).
 
-    OpenAlex -> (+ Google Scholar) -> якщо нічого не отримали, береться кеш.
+    language: None (будь-яка) або код мови, наприклад "uk".
     """
+    # ключ кешу враховує мову
+    cache_key = f"{query} [{language}]" if language else query
+
     records = []
     try:
-        records = _fetch_openalex(query, limit)
+        records = _fetch_openalex(query, limit, language)
     except (requests.RequestException, ValueError) as e:
         print(f"[api_client] Помилка OpenAlex: {e}")
 
     if use_google_scholar:
         records += _fetch_google_scholar(query)
 
-    records = records[:MAX_RESULTS]  
+    records = records[:MAX_RESULTS]
 
     if records:
-        save_to_cache(query, records)
+        save_to_cache(cache_key, records)
         return records
 
-    cached = load_from_cache(query)
+    cached = load_from_cache(cache_key)
     if cached:
         print("[api_client] Використано дані з кешу.")
     return cached
