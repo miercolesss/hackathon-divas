@@ -14,16 +14,19 @@ query = st.text_area(
     height=100,
 )
 
+# Усе, що виконується після натискання кнопки, суворо всередині цього блоку:
 if st.button("Знайти джерела"):
     with st.spinner("Шукаємо в наукових базах та обробляємо через Pandas..."):
         raw_data = fetch_papers(query, limit=10)
+
+    # Ось цей рядок тепер точно всередині кнопки і має правильний відступ:
     df = process_works(raw_data)
 
     if not df.empty:
         df["APA_7"] = df.apply(format_authors_apa, axis=1)
         df["DSTU_8302"] = df.apply(format_authors_dstu, axis=1)
 
-        st.success(f"Знайдено та оброблено {len(df)} перевірених джерел!:)")
+        st.success(f"Знайдено та оброблено {len(df)} перевірених джерел!")
 
         for idx, row in df.iterrows():
             with st.expander(
@@ -48,7 +51,7 @@ if st.button("Знайти джерела"):
                         key=f"dstu_{idx}",
                     )
 
-        st.subheader("Зведена таблиця")
+        st.subheader("📊 Зведена таблиця")
         st.dataframe(
             df[["title", "authors", "publication_year", "cited_by_count", "doi"]]
         )
@@ -62,17 +65,3 @@ if st.button("Знайти джерела"):
         )
     else:
         st.error("Нічого не знайдено. Спробуйте інший запит.")
-    st.subheader("Зведена таблиця")
-    st.dataframe(
-    df[["title", "authors", "publication_year", "cited_by_count", "doi"]]
-)
-
-    csv = df.to_csv(index=False).encode("utf-8")
-    st.download_button(
-        "Завантажити бібліографію (CSV)",
-        csv,
-        "references.csv",
-        "text/csv",
-    )
-else:
-    st.error("Нічого не знайдено:(. Спробуйте інший запит.")
