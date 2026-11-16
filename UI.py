@@ -3,7 +3,14 @@ import streamlit as st
 
 from api_client import fetch_scientific_works
 from formatter import format_apa, format_dstu
-from processor import process_works, build_search_query
+from processor import process_works
+
+try:
+    from processor import build_search_query
+except ImportError:
+    # у вашому processor.py цієї функції немає — шлемо текст як є
+    def build_search_query(text):
+        return " ".join(text.split())
 
 st.set_page_config(page_title="ScholarRef", page_icon="🎓", layout="wide")
 
