@@ -50,15 +50,6 @@ st.markdown(
         border-radius: 6px;
     }
 
-    /* Виправлення накладання тексту в шапці експандерів */
-    div[data-testid="stExpander"] summary p {
-        white-space: normal !important;
-        overflow: visible !important;
-        text-overflow: clip !important;
-        font-size: 1rem !important;
-        line-height: 1.4 !important;
-    }
-
     textarea {
         background-color: #FFFFFF !important;
         border: 1px solid #C5CEDB !important;
