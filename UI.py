@@ -1,5 +1,4 @@
 import streamlit as st
-
 from api_client import fetch_papers
 from formatter import format_authors_apa, format_authors_dstu
 from processor import process_works
@@ -14,52 +13,44 @@ query = st.text_area(
     height=100,
 )
 
+# Створюємо порожню змінну заздалегідь, щоб вона ІСНУВАЛА
+df = None
+
 if st.button("Знайти джерела"):
     with st.spinner("Шукаємо в наукових базах та обробляємо через Pandas..."):
         raw_data = fetch_papers(query, limit=10)
+        # Обробляємо всередині кнопки
+        df = process_works(raw_data)
 
-    df = process_works(raw_data)
+# А от виводимо результати ТІЛЬКИ ЯКЩО df створений і не порожній:
+if df is not None and not df.empty:
+    df["APA_7"] = df.apply(format_authors_apa, axis=1)
+    df["DSTU_8302"] = df.apply(format_authors_dstu, axis=1)
 
-    if not df.empty:
-        df["APA_7"] = df.apply(format_authors_apa, axis=1)
-        df["DSTU_8302"] = df.apply(format_authors_dstu, axis=1)
+    st.success(f"Знайдено та оброблено {len(df)} перевірених джерел!")
 
-        st.success(f"Знайдено та оброблено {len(df)} перевірених джерел!")
+    for idx, row in df.iterrows():
+        with st.expander(
+            f"{row['title']} ({row['publication_year']}) — Цитувань: {row['cited_by_count']}",
+            expanded=True,
+        ):
+            st.markdown(f"**Автори:** {row['authors']}")
+            st.markdown(f"**Журнал:** {row['journal']}")
+            col1, col2 = st.columns(2)
+            with col1:
+                st.text_area("APA 7th Edition", row["APA_7"], height=70, key=f"apa_{idx}")
+            with col2:
+                st.text_area("ДСТУ 8302:2015", row["DSTU_8302"], height=70, key=f"dstu_{idx}")
 
-        for idx, row in df.iterrows():
-            with st.expander(
-                f"{row['title']} ({row['publication_year']}) — Цитувань: {row['cited_by_count']}",
-                expanded=True,
-            ):
-                st.markdown(f"**Автори:** {row['authors']}")
-                st.markdown(f"**Журнал:** {row['journal']}")
-                col1, col2 = st.columns(2)
-                with col1:
-                    st.text_area(
-                        "APA 7th Edition",
-                        row["APA_7"],
-                        height=70,
-                        key=f"apa_{idx}",
-                    )
-                with col2:
-                    st.text_area(
-                        "ДСТУ 8302:2015",
-                        row["DSTU_8302"],
-                        height=70,
-                        key=f"dstu_{idx}",
-                    )
+    st.subheader("📊 Зведена таблиця")
+    st.dataframe(df[["title", "authors", "publication_year", "cited_by_count", "doi"]])
 
-        st.subheader("📊 Зведена таблиця")
-        st.dataframe(
-            df[["title", "authors", "publication_year", "cited_by_count", "doi"]]
-        )
-
-        csv = df.to_csv(index=False).encode("utf-8")
-        st.download_button(
-            "📥 Завантажити бібліографію (CSV)",
-            csv,
-            "references.csv",
-            "text/csv",
-        )
-    else:
-        st.error("Нічого не знайдено. Спробуйте інший запит.")
+    csv = df.to_csv(index=False).encode("utf-8")
+    st.download_button(
+        "📥 Завантажити бібліографію (CSV)",
+        csv,
+        "references.csv",
+        "text/csv",
+    )
+elif df is not None and df.empty:
+    st.error("Нічого не знайдено. Спробуйте інший запит.")
