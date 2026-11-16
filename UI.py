@@ -4,6 +4,73 @@ from formatter import format_apa, format_dstu
 from processor import process_works
 
 st.set_page_config(page_title="ScholarRef", layout="wide")
+
+st.markdown(
+    """
+    <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Lora:ital,wght@0,600;0,700;1,400&display=swap');
+
+    .stApp {
+        background-color: #F7F8FA;
+        color: #1B283E;
+        font-family: 'Inter', sans-serif;
+    }
+
+    h1, h2, h3 {
+        font-family: 'Lora', Georgia, serif !important;
+        color: #1B283E !important;
+        letter-spacing: -0.01em;
+    }
+
+    div.stButton > button:first-child {
+        background-color: #1B283E;
+        color: #FFFFFF;
+        border: 1px solid #1B283E;
+        border-radius: 6px;
+        padding: 0.55rem 1.4rem;
+        font-family: 'Inter', sans-serif;
+        font-weight: 500;
+        transition: all 0.2s ease;
+    }
+    div.stButton > button:first-child:hover {
+        background-color: #2B3E5E;
+        border-color: #2B3E5E;
+        color: #FFFFFF;
+    }
+
+    div[data-testid="stExpander"] {
+        background-color: #FFFFFF;
+        border: 1px solid #D8DEE9;
+        border-left: 4px solid #1B283E;
+        border-radius: 6px;
+    }
+
+    textarea {
+        background-color: #FFFFFF !important;
+        border: 1px solid #C5CEDB !important;
+        color: #1B283E !important;
+        font-family: 'Inter', sans-serif !important;
+    }
+
+    .custom-footer {
+        margin-top: 4rem;
+        padding-top: 1.2rem;
+        padding-bottom: 1.5rem;
+        border-top: 1px solid #D8DEE9;
+        text-align: center;
+        color: #4C5B73;
+        font-size: 0.9rem;
+        font-family: 'Inter', sans-serif;
+    }
+    .custom-footer strong {
+        color: #1B283E;
+        font-family: 'Lora', serif;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True,
+)
+
 st.title("🎓 ScholarRef — пошук реальних наукових цитат")
 st.markdown("Інструмент для студентів: пошук реальних статей та генерація посилань")
 
@@ -54,3 +121,12 @@ if df is not None and not df.empty:
     )
 elif df is not None and df.empty:
     st.error("Нічого не знайдено. Спробуйте інший запит.")
+
+st.markdown(
+    """
+    <div class="custom-footer">
+        Створено командою <strong>Hackathon Divas</strong> (Марія Борисюк та команда) • ScholarRef, 2026
+    </div>
+    """,
+    unsafe_allow_html=True,
+)
