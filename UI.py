@@ -7,6 +7,10 @@ st.set_page_config(page_title="ScholarRef", layout="wide")
 st.title("🎓 ScholarRef — пошук реальних наукових цитат")
 st.markdown("Інструмент для студентів: пошук реальних статей та генерація посилань")
 
+lang_choice = st.selectbox("🌐 Мова статей:", ["Будь-яка", "Українська"])
+language = "uk" if lang_choice == "Українська" else None
+
+raw_data = fetch_scientific_works(search_query, limit=10, language=language)
 query = st.text_area(
     "Вставте абзац із вашої наукової роботи:",
     value="",
