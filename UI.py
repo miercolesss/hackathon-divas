@@ -8,18 +8,21 @@ st.set_page_config(page_title="ScholarRef", layout="wide")
 st.markdown(
     """
     <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Lora:ital,wght@0,600;0,700;1,400&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,400&family=Montserrat:wght@400;500;600&display=swap');
+
+    .stApp, .stApp *, p, span, label, div, input, textarea {
+        font-family: 'Montserrat', sans-serif !important;
+        color: #1B283E;
+    }
 
     .stApp {
         background-color: #F7F8FA;
-        color: #1B283E;
-        font-family: 'Inter', sans-serif;
     }
 
-    h1, h2, h3 {
-        font-family: 'Lora', Georgia, serif !important;
+    h1, h2, h3, .academic-title {
+        font-family: 'Cormorant Garamond', Georgia, serif !important;
+        font-weight: 700 !important;
         color: #1B283E !important;
-        letter-spacing: -0.01em;
     }
 
     div.stButton > button:first-child {
@@ -28,7 +31,7 @@ st.markdown(
         border: 1px solid #1B283E;
         border-radius: 6px;
         padding: 0.55rem 1.4rem;
-        font-family: 'Inter', sans-serif;
+        font-family: 'Montserrat', sans-serif;
         font-weight: 500;
         transition: all 0.2s ease;
     }
@@ -49,7 +52,7 @@ st.markdown(
         background-color: #FFFFFF !important;
         border: 1px solid #C5CEDB !important;
         color: #1B283E !important;
-        font-family: 'Inter', sans-serif !important;
+        font-family: 'Montserrat', sans-serif !important;
     }
 
     .custom-footer {
@@ -60,11 +63,10 @@ st.markdown(
         text-align: center;
         color: #4C5B73;
         font-size: 0.9rem;
-        font-family: 'Inter', sans-serif;
+        font-family: 'Montserrat', sans-serif;
     }
     .custom-footer strong {
         color: #1B283E;
-        font-family: 'Lora', serif;
     }
     </style>
     """,
@@ -125,7 +127,7 @@ elif df is not None and df.empty:
 st.markdown(
     """
     <div class="custom-footer">
-        Створено командою <strong>Hackathon Divas</strong> (Марія Борисюк та команда) • ScholarRef, 2026
+        Hackathon Divas • 2026
     </div>
     """,
     unsafe_allow_html=True,
