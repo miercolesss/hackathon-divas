@@ -1,6 +1,6 @@
 import pandas as pd
 
-def process_works(raw_works: list[dict]) -> pd.DataFrame:
+def process_works(raw_data):
       processed_list = []
       for item in raw_data:
             processed_list.append({
