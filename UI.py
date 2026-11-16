@@ -9,17 +9,15 @@ st.title("🎓 ScholarRef — пошук реальних наукових ци�
 st.markdown("Інструмент для студентів: пошук реальних статей та генерація посилань.")
 
 query = st.text_area(
-    "Вставте абзац із вашої наукової роботи:",
+    "📝 Вставте абзац із вашої наукової роботи:",
     value="",
     height=100,
 )
 
-# Усе, що виконується після натискання кнопки, суворо всередині цього блоку:
 if st.button("Знайти джерела"):
     with st.spinner("Шукаємо в наукових базах та обробляємо через Pandas..."):
         raw_data = fetch_papers(query, limit=10)
 
-    # Ось цей рядок тепер точно всередині кнопки і має правильний відступ:
     df = process_works(raw_data)
 
     if not df.empty:
@@ -58,7 +56,7 @@ if st.button("Знайти джерела"):
 
         csv = df.to_csv(index=False).encode("utf-8")
         st.download_button(
-            "Завантажити бібліографію (CSV)",
+            "📥 Завантажити бібліографію (CSV)",
             csv,
             "references.csv",
             "text/csv",
