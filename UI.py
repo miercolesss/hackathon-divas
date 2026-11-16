@@ -16,7 +16,7 @@ query = st.text_area(
 
 if st.button("Знайти джерела"):
     with st.spinner("Шукаємо в наукових базах та обробляємо через Pandas..."):
-        raw_data = fetch_papers(query, limit=10)
+    raw_data = fetch_papers(query, limit=10)
 
     df = process_works(raw_data)
 
