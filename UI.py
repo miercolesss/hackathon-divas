@@ -125,7 +125,7 @@ elif df is not None and df.empty:
 st.markdown(
     """
     <div class="custom-footer">
-        Створено командою <strong>Hackathon Divas</strong> (Марія Борисюк та команда) • ScholarRef, 2026
+        Створено командою <strong>Hackathon Divas</strong> • ScholarRef, 2026
     </div>
     """,
     unsafe_allow_html=True,
