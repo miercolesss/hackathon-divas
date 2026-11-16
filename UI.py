@@ -20,7 +20,7 @@ if st.button("Знайти джерела"):
         st.warning("Спочатку введіть текст або ключові слова.")
     else:
         with st.spinner("Шукаємо в наукових базах та обробляємо через Pandas..."):
-            raw_data = fetch_papers(query, limit=10)
+            raw_data = fetch_scientific_works(query, limit=10)
             df = process_works(raw_data)
 
 if df is not None and not df.empty:
