@@ -14,3 +14,14 @@ query = st.text_area(
     value="",
     height=100,
 )
+
+if st.button("Знайти джерела"):
+    with st.spinner("Шукаємо в наукових базах та обробляємо через Pandas..."):
+        raw_data = fetch_papers(query, limit=10)
+
+df = process_works(raw_data)
+if not df.empty:
+    df["APA_7"] = df.apply(format_apa, axis=1)
+    df["DSTU_8302"] = df.apply(format_dstu, axis=1)
+
+    st.success(f"Знайдено та оброблено {len(df)} перевірених джерел!")
