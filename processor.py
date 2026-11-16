@@ -1,7 +1,7 @@
 import pandas as pd
 
 def process_works(raw_works: list[dict]) -> pd.DataFrame:
-  if not raw_works:
+  if raw_works is None or raw_works.empty:
         return pd.DataFrame(
             columns=["title", "authors", "publication_year", "cited_by_count", "doi", "journal"]
         )
