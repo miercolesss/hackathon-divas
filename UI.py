@@ -8,11 +8,11 @@ st.set_page_config(page_title="ScholarRef", layout="wide")
 st.markdown(
     """
     <style>
-    @import url('https://fonts.googleapis.com/css2?family=PT+Serif:ital,wght@0,400;0,700;1,400&family=Roboto:wght@400;500;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,400&family=Montserrat:wght@400;500;600&display=swap');
 
     .stApp, .stApp *, p, span, label, div, input, textarea {
-        font-family: 'PT Serif', Georgia, serif !important;
-        color: #1B283E !important;
+        font-family: 'Montserrat', sans-serif !important;
+        color: #1B283E;
     }
 
     .stApp {
@@ -20,33 +20,31 @@ st.markdown(
     }
 
     h1, h2, h3, .academic-title {
-        font-family: 'PT Serif', Georgia, serif !important;
+        font-family: 'Cormorant Garamond', Georgia, serif !important;
         font-weight: 700 !important;
         color: #1B283E !important;
     }
 
     div.stButton > button:first-child {
-        background-color: #1B283E !important;
-        color: #FFFFFF !important;
-        border: 1px solid #1B283E !important;
+        background-color: #1B283E;
+        color: #FFFFFF;
+        border: 1px solid #1B283E;
         border-radius: 6px;
         padding: 0.55rem 1.4rem;
-        font-family: 'PT Serif', Georgia, serif !important;
-        font-weight: 700 !important;
-    }
-    div.stButton > button:first-child p {
-        color: #FFFFFF !important;
+        font-family: 'Montserrat', sans-serif;
+        font-weight: 500;
+        transition: all 0.2s ease;
     }
     div.stButton > button:first-child:hover {
-        background-color: #2B3E5E !important;
-        border-color: #2B3E5E !important;
-        color: #FFFFFF !important;
+        background-color: #2B3E5E;
+        border-color: #2B3E5E;
+        color: #FFFFFF;
     }
 
     div[data-testid="stExpander"] {
-        background-color: #FFFFFF !important;
-        border: 1px solid #D8DEE9 !important;
-        border-left: 4px solid #1B283E !important;
+        background-color: #FFFFFF;
+        border: 1px solid #D8DEE9;
+        border-left: 4px solid #1B283E;
         border-radius: 6px;
     }
 
@@ -54,7 +52,7 @@ st.markdown(
         background-color: #FFFFFF !important;
         border: 1px solid #C5CEDB !important;
         color: #1B283E !important;
-        font-family: 'PT Serif', Georgia, serif !important;
+        font-family: 'Montserrat', sans-serif !important;
     }
 
     .custom-footer {
@@ -63,9 +61,12 @@ st.markdown(
         padding-bottom: 1.5rem;
         border-top: 1px solid #D8DEE9;
         text-align: center;
-        color: #4C5B73 !important;
-        font-size: 0.95rem;
-        font-family: 'PT Serif', Georgia, serif !important;
+        color: #4C5B73;
+        font-size: 0.9rem;
+        font-family: 'Montserrat', sans-serif;
+    }
+    .custom-footer strong {
+        color: #1B283E;
     }
     </style>
     """,
