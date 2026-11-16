@@ -12,6 +12,30 @@ MAX_PER_PAGE = 200
 CACHE_FILE = "papers_cache.json"
 GS_LIMIT = 2  # мало, щоб не зловити бан Google Scholar
 #-------- основна функція -----------
+def _fetch_openalex(query, limit):
+    limit = max(1, min(int(limit), MAX_PER_PAGE))
+    response = requests.get(
+        OPENALEX_URL,
+        params={"search": query, "per-page": limit},
+        headers=HEADERS,
+        timeout=10,
+    )
+    response.raise_for_status()
+    return [_parse_openalex(w) for w in response.json().get("results", [])]
+
+
+def _fetch_google_scholar(query, limit=GS_LIMIT):
+    if scholarly is None:
+        return []
+    records = []
+    try:
+        search = scholarly.search_pubs(query)
+        for _ in range(limit):
+            records.append(_parse_scholar(next(search)))
+    except Exception as e:
+        print(f"[api_client] Google Scholar недоступний: {e}")
+    return records
+
 def fetch_scientific_works(query, limit=20, use_google_scholar=False):
     """Повертає list of dicts за контрактом. Ніколи не кидає виняток.
 
