@@ -43,7 +43,7 @@ def normalize_authors(authors) -> list[str]:
 
 def split_name(full_name: str) -> tuple[str, list[str]]:
     """'John Ronald Smith' -> ('Smith', ['John', 'Ronald'])."""
-    parts = full_name.split()
+    parts = str(full_name).split()
     if not parts:
         return "", []
     return parts[-1], parts[:-1]
@@ -109,6 +109,7 @@ def _dstu_name(full_name: str) -> str:
 
 def format_authors_apa(authors: list[str]) -> str:
     """1: 'Smith, J.' | 2: 'Smith, J., & Doe, A.' | 3–20: усі через кому з '&' | 21+: перші 19, '...', останній."""
+    authors = normalize_authors(authors)
     names = [_apa_name(a) for a in authors]
     if not names:
         return ""
@@ -121,6 +122,7 @@ def format_authors_apa(authors: list[str]) -> str:
 
 def format_authors_dstu(authors: list[str]) -> str:
     """1–3 автори: 'Smith J., Doe A.' | 4+: порожньо (опис під назвою, 'та ін.' у відповідальності)."""
+    authors = normalize_authors(authors)
     if not 1 <= len(authors) <= 3:
         return ""
     return ", ".join(_dstu_name(a) for a in authors)
@@ -138,7 +140,7 @@ def format_apa(row: dict) -> str:
     if authors:
         parts.append(f"{format_authors_apa(authors)} ({year}).")
         parts.append(_end(title))
-    else:  # без авторів назва йде на місце автора
+    else:
         parts.append(_end(title))
         parts.append(f"({year}).")
     parts.append(_end(journal))
@@ -158,7 +160,7 @@ def format_dstu(row: dict) -> str:
     if 1 <= len(authors) <= 3:
         parts.append(format_authors_dstu(authors))
         parts.append(_end(title))
-    elif len(authors) > 3:  # 4+ авторів: назва / перший автор та ін.
+    elif len(authors) > 3:
         surname, given = split_name(authors[0])
         first = f"{initials(given)} {surname}".strip()
         parts.append(f"{title} / {first} та ін.")
