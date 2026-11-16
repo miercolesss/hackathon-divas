@@ -56,7 +56,7 @@ if st.button("Знайти джерела"):
 
         csv = df.to_csv(index=False).encode("utf-8")
         st.download_button(
-            "📥 Завантажити бібліографію (CSV)",
+            "Завантажити бібліографію (CSV)",
             csv,
             "references.csv",
             "text/csv",
