@@ -18,7 +18,7 @@ if st.button("Знайти джерела"):
     with st.spinner("Шукаємо в наукових базах та обробляємо через Pandas..."):
         raw_data = fetch_papers(query, limit=10)
 
-        df = process_works(raw_data)
+    df = process_works(raw_data)
 
     if not df.empty:
         df["APA_7"] = df.apply(format_authors_apa, axis=1)
