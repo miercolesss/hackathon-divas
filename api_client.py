@@ -8,12 +8,92 @@ except ImportError:
 
 OPENALEX_URL = "https://api.openalex.org/works"
 HEADERS = {"User-Agent": "mailto:hackathon_team@example.com"}
-MAX_PER_PAGE = 200
+MAX_RESULTS = 10  # жорсткий ліміт статей на один запит щоб загалом у нас вийшов вигідний додаток і для розробників (разом з Google Scholar)
 CACHE_FILE = "papers_cache.json"
 GS_LIMIT = 2  # мало, щоб не зловити бан Google Scholar
-#-------- основна функція -----------
+
+
+# ---------- допоміжні ----------
+
+def _restore_abstract(inverted_index):
+    if not inverted_index:
+        return ""
+    words = {}
+    for word, positions in inverted_index.items():
+        for pos in positions:
+            words[pos] = word
+    return " ".join(words[i] for i in sorted(words))
+
+
+def _to_int(value):
+    try:
+        return int(value)
+    except (TypeError, ValueError):
+        return None
+
+
+def _parse_openalex(work):
+    authors = ", ".join(
+        a["author"]["display_name"]
+        for a in work.get("authorships", [])
+        if (a.get("author") or {}).get("display_name")
+    )
+    source = (work.get("primary_location") or {}).get("source") or {}
+    return {
+        "title": work.get("title") or work.get("display_name"),
+        "authors": authors,
+        "year": work.get("publication_year"),
+        "cited_by_count": work.get("cited_by_count") or 0,
+        "doi": work.get("doi"),
+        "abstract": _restore_abstract(work.get("abstract_inverted_index")),
+        "journal": source.get("display_name") or "",
+    }
+
+
+def _parse_scholar(pub):
+    bib = pub.get("bib", {})
+    author = bib.get("author", "")
+    if isinstance(author, list):
+        author = ", ".join(author)
+    return {
+        "title": bib.get("title"),
+        "authors": author,
+        "year": _to_int(bib.get("pub_year")),
+        "cited_by_count": pub.get("num_citations") or 0,
+        "doi": pub.get("pub_url"),
+        "abstract": bib.get("abstract", ""),
+        "journal": bib.get("venue", ""),
+    }
+
+
+# ---------- кеш ----------
+
+def _load_cache():
+    try:
+        with open(CACHE_FILE, encoding="utf-8") as f:
+            return json.load(f)
+    except (OSError, ValueError):
+        return {}
+
+
+def save_to_cache(query, records):
+    cache = _load_cache()
+    cache[query.strip().lower()] = records
+    try:
+        with open(CACHE_FILE, "w", encoding="utf-8") as f:
+            json.dump(cache, f, ensure_ascii=False, indent=2)
+    except OSError as e:
+        print(f"[api_client] Не вдалося записати кеш: {e}")
+
+
+def load_from_cache(query):
+    return _load_cache().get(query.strip().lower(), [])[:MAX_RESULTS]
+
+
+# ---------- основна функція ----------
+
 def _fetch_openalex(query, limit):
-    limit = max(1, min(int(limit), MAX_PER_PAGE))
+    limit = max(1, min(int(limit), MAX_RESULTS))
     response = requests.get(
         OPENALEX_URL,
         params={"search": query, "per-page": limit},
@@ -36,8 +116,9 @@ def _fetch_google_scholar(query, limit=GS_LIMIT):
         print(f"[api_client] Google Scholar недоступний: {e}")
     return records
 
-def fetch_scientific_works(query, limit=20, use_google_scholar=False):
-    """Повертає list of dicts за контрактом. Ніколи не кидає виняток.
+
+def fetch_scientific_works(query, limit=10, use_google_scholar=False):
+    """Повертає list of dicts за контрактом (максимум 10 статей). Ніколи не кидає виняток.
 
     OpenAlex -> (+ Google Scholar) -> якщо нічого не отримали, береться кеш.
     """
@@ -50,6 +131,8 @@ def fetch_scientific_works(query, limit=20, use_google_scholar=False):
     if use_google_scholar:
         records += _fetch_google_scholar(query)
 
+    records = records[:MAX_RESULTS]  # загалом не більше 10 статей
+
     if records:
         save_to_cache(query, records)
         return records
@@ -60,8 +143,15 @@ def fetch_scientific_works(query, limit=20, use_google_scholar=False):
     return cached
 
 
-if __name__ == "__main__":
+def fetch_papers(query, limit=10, use_google_scholar=False):
+    """Те саме, але повертає pandas.DataFrame (для коду, що очікує fetch_papers)."""
+    import pandas as pd
+    return pd.DataFrame(fetch_scientific_works(query, limit, use_google_scholar))
 
+
+if __name__ == "__main__":
+    # Тест:                  python api_client.py
+    # Прогрів кешу до пітчу: python api_client.py "ваш демо-запит" 10 gs
     import sys
 
     q = sys.argv[1] if len(sys.argv) > 1 else "AI hallucinations"
@@ -73,7 +163,3 @@ if __name__ == "__main__":
         print(f"{w['year']} | {w['cited_by_count']} | {w['title']}")
         print(f"    {w['authors'][:80]} | {w['journal']} | {w['doi']}")
     print(f"Отримано: {len(works)}")
-
-def fetch_papers(query, limit=5, use_google_scholar=False):
-    import pandas as pd
-    return pd.DataFrame(fetch_scientific_works(query, limit, use_google_scholar))
