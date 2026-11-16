@@ -1,10 +1,19 @@
 import pandas as pd
 
 def process_works(raw_works: list[dict]) -> pd.DataFrame:
-  if raw_works is None or raw_works.empty:
-        return pd.DataFrame(
-            columns=["title", "authors", "publication_year", "cited_by_count", "doi", "journal"]
-        )
+      processed_list = []
+    for item in raw_data:
+        processed_list.append({
+            "title": item.get("title", "No Title"),
+            "authors": item.get("authors", "Unknown"),
+            "publication_year": item.get("year") or item.get("publication_year", 0),
+            "cited_by_count": item.get("cited_by_count", 0),
+            "journal": item.get("journal", "Unknown Journal"),
+            "doi": item.get("doi", "")
+        })
+    
+    df = pd.DataFrame(processed_list)
+    return df
     
   df = pd.DataFrame(raw_works)
   
