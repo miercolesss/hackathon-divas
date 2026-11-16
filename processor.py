@@ -19,3 +19,12 @@ def process_works(raw_works: list[dict]) -> pd.DataFrame:
 
   df = df.sort_values(by="cited_by_count", ascending=False).reset_index(drop=True)
   return df
+
+
+def get_yearly_trends(df: pd.DataFrame) -> pd.Series:
+    if df.empty:
+        return pd.Series(dtype=int)
+    valid_years = df[df["publication_year"] > 1900]
+    trends = valid_years["publication_year"].value_counts().sort_index()
+    
+    return trends
