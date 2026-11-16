@@ -24,7 +24,7 @@ if st.button("Знайти джерела"):
         df["APA_7"] = df.apply(format_authors_apa, axis=1)
         df["DSTU_8302"] = df.apply(format_authors_dstu, axis=1)
 
-        st.success(f"Знайдено та оброблено {len(df)} перевірених джерел!")
+        st.success(f"Знайдено та оброблено {len(df)} перевірених джерел!:)")
 
         for idx, row in df.iterrows():
             with st.expander(
